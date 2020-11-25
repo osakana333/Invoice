@@ -1,0 +1,128 @@
+@charset "UTF-8";
+body {
+  background-color: white;
+  padding: 0 20px;
+}
+hr {
+  margin: 15px 0;
+}
+/* table あとでなんとかして */
+
+#clone {
+  margin: 0 10px;
+}
+.center {
+  text-align: center;
+}
+
+.memo {
+  display: table;
+  float: left;
+  width: 400px;
+}
+.table {
+  display: table;
+}
+.tableList {
+  display: table;
+  width: 800px;
+}
+.col,
+.col50,
+.col100 {
+  display: table-column-group;
+}
+.col {
+  width: 250px;
+}
+.col50 {
+  width: 50px;
+}
+.col100 {
+  width: 100px;
+}
+.thead,
+.tbody,
+.tfoot {
+  display: table-row-group;
+  width: 100%;
+}
+.tr {
+  display: table-row;
+}
+.th,
+.td {
+  display: table-cell;
+  vertical-align: top;
+}
+.th {
+  font-weight: bold;
+}
+#total_col {
+  column-span: 3;
+}
+
+.unit {
+  width: 80%;
+}
+input[type="number"] {
+  width: 90%;
+}
+.note {
+  width: 90%;
+}
+
+.select {
+  width: 300px;
+}
+.selectItem {
+  width: 96%;
+}
+
+/* lyaut
+
+.tableList {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.tableList .th:first-child {
+  border-radius: 5px 0 0 0;
+}
+
+.tableList .th:last-child {
+  border-radius: 0 5px 0 0;
+  border-right: 1px solid #3c6690;
+}
+
+.tableList .th {
+  text-align: center;
+  color: white;
+  background: linear-gradient(#829ebc, #225588);
+  border-left: 1px solid #3c6690;
+  border-top: 1px solid #3c6690;
+  border-bottom: 1px solid #3c6690;
+  box-shadow: 0px 1px 1px rgba(255, 255, 255, 0.3) inset;
+  padding: 10px 0;
+}
+
+.tableList .td {
+  text-align: center;
+  border-left: 1px solid #a8b7c5;
+  border-bottom: 1px solid #a8b7c5;
+  border-top: none;
+  box-shadow: 0px -3px 5px 1px #eee inset;
+  padding: 10px 0;
+}
+
+.tableList .td:last-child {
+  border-right: 1px solid #a8b7c5;
+}
+
+.tableList .tr:last-child .td:first-child {
+  border-radius: 0 0 0 5px;
+}
+
+.tableList .tr:last-child .td:last-child {
+  border-radius: 0 0 5px 0;
+}
