@@ -6,11 +6,14 @@
 
   <p>
   <select class="select" name="destination" id="destination">
-    <!--  -->
-    <option value="0">宛先社名を選択</option>
-    <option value="1">株式会社どこか</option>
-    <option value="2">有限会社そこか</option>
-    <option value="3">合同会社おまえか</option>
+  <option value="0">宛先社名を選択</option>
+  <?php
+  foreach ($pdo->query('select * from tokuisaki') as $row) {
+  ?>
+        <option value="<?=$row['tk_id']?>"><?=$row['tk_mei']?></option>
+  <?php
+  }
+  ?>
   </select>
 
   <input class="input" type="date" name="date" id="date" required>
@@ -18,11 +21,14 @@
   <p>
   請求者ID
   <select name="claimantID" id="claimantID">
-    <!--  -->
     <option value="0"></option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
+    <?php
+    foreach ($pdo->query('select * from seikyusha') as $row) {
+    ?>
+      <option value="<?=$row['ow_id']?>"><?=$row['ow_id']?></option>
+    <?php
+    }
+    ?>
   </select>
 
   <input class="input col100" type="text" name="cZip" placeholder="請求者 〒">
@@ -51,9 +57,13 @@
         <div class="td">
           <select class="selectItem" name="item" id='item1'>
             <option value="0">科目名を選択</option>
-            <option value="1">兵糧丸</option>
-            <option value="2">神通丸</option>
-            <option value="3">遁甲符</option>
+            <?php
+            foreach ($pdo->query('select * from kamoku') as $row) {
+            ?>
+              <option value="<?=$row['km_id']?>"><?=$row['km_mei']?></option>
+            <?php
+            }
+            ?>
           </select>
         </div>
         <div class="td">
@@ -93,7 +103,7 @@
     <div class="col100">単位</div>
     <div class="col">単価</div>
       <div class="tr">
-        <div class="td" id="ms_subtotal">小計</div>
+        <div class="td" id="ms_subtotal">小計(税抜)</div>
         <div class="td"><input class="input" type="number" name="subtotal" id="subtotal" value="0"></div>
         <div class="td"><input type="button" value="１行追加" id='clone'></div>
       </div>

@@ -18,7 +18,7 @@ $(function () {
   });
 
   var income_tax = [0.1021, 0.2042];
-
+/*
   var claimantData = {
     1: ['名前 太郎','000-0000','冒企県六分儀市忍里00-0','比良坂銀行忍里支店'] ,
     2: ['名前 花子','111-0000','冒企県六分儀市はぐれ坂00-0 昼顔荘4F 508号室','夜持銀行はぐれ坂支店'] ,
@@ -30,17 +30,19 @@ $(function () {
     2: ['神通丸','個','20000'],
     3: ['遁甲符','枚','30000'],
   }
-
+*/
   $('#claimantID').change(function () { 
     var id = $('#claimantID').val();
     if (id==0) {
       $('[name="cName"]').val('');
       $('[name="cAddr"]').val('');
       $('[name="cZip"]').val('');
+      $('#memo').val('')
     } else {
-      $('[name="cName"]').val(claimantData[id][0]);
-      $('[name="cAddr"]').val(claimantData[id][2]);
-      $('[name="cZip"]').val(claimantData[id][1])
+      $('[name="cName"]').val(claimantData[id]['ow_mei']);
+      $('[name="cAddr"]').val(claimantData[id]['ow_jusho']);
+      $('[name="cZip"]').val(claimantData[id]['ow_zip']);
+      $('#memo').val(claimantData[id]['ginko'])
     }
   });
 
@@ -66,8 +68,8 @@ $(function () {
         $('#item' + row).val(0);
       } else {
         $('#qu' + row).val('');
-        $('#unit'+row).val(itemData[id][1]);
-        $('#price' + row).val(itemData[id][2]);
+        $('#unit'+row).val(itemData[id]['tani']);
+        $('#price' + row).val(itemData[id]['km_tanka']);
         $('#amount' + row).val('');
         $('#note' + row).val('');
       }
@@ -76,6 +78,18 @@ $(function () {
   });
 
   $('.qu').change(function () {
+    var row = $(this).parents('.tr').attr('id');
+    var qu = $('#qu' + row).val();
+    var price = $('#price' + row).val();
+    if ($('#item' + row).val() == 0) {
+      $('#amount'+row).val('');
+    } else {
+      $('#amount'+row).val(qu * price);
+    }
+    total_tax();
+  });
+
+  $('.price').change(function () {
     var row = $(this).parents('.tr').attr('id');
     var qu = $('#qu' + row).val();
     var price = $('#price' + row).val();
@@ -98,68 +112,39 @@ $(function () {
         subtotal += parseFloat($(value).val());
       }
     });
-    var tax = Math.round(subtotal * 0.08);
-    var total = subtotal + tax;
-    var exTotal = subtotal - tax;
-    if (total > 1000000) {
-      var taxwh1 = Math.round((total - 1000000) * income_tax[1] + (1000000 * income_tax[0]));
-    } else {
-      var taxwh1 = Math.round(total*income_tax[0]);
-    }
-    if (exTotal > 1000000) {
-      var taxwh2 = Math.round((exTotal - 1000000) * income_tax[1] + (1000000 * income_tax[0]));
-    } else {
-      var taxwh2 = Math.round(exTotal*income_tax[0]);
-    }
-    var total1 = subtotal + tax - taxwh1
-    var total2 = subtotal - taxwh2;
-
-    // [subtotal, tax, exTotal, total, taxwh1, total1, taxwh2, total2];
-
-    //外税+源泉徴収差引なし:小計subtotal,税額tax,合計total
-    //外税+源泉徴収差引あり:小計subtotal,税額tax,源泉taxwh1,合計total1
-    //内税+源泉徴収差引なし:課税対象額exTotal,税額tax,合計subtotal
-    //内税+源泉徴収差引あり:課税対象額exTotal,税額tax,源泉taxwh2,合計total2
-
-    //これ内税の計算ミスってる
-    //先にチェックボックスで分岐して最後に値を突っ込む
-
-    $('#tax').val(tax);
-    if ($('#intax').prop('checked')) {
-      $('#ms_subtotal').text('課税対象額');
-      $('#subtotal').val(exTotal);
-      if ($('#withhold').prop('checked')) {
-        $('#total').val(total2);
-        $('#taxwh').val(taxwh2);
-      } else {
-        $('#total').val(subtotal);
-        $('#taxwh').val('');
-      }
-    } else {
+    if ($('#intax').prop('checked')) { //--------内税
       $('#ms_subtotal').text('小計(税込)');
-      $('#subtotal').val(subtotal);
-      if ($('#withhold').prop('checked')) {
-        $('#total').val(total1);
-        $('#taxwh').val(taxwh1);
-      } else {
-        $('#total').val(total);
-        $('#taxwh').val('');
-      }
+      var tax = Math.round((subtotal * 8)/108);
+      var total = subtotal;
+    } else { //----------------------------------外税
+      $('#ms_subtotal').text('小計(税抜)');
+      var tax = Math.round(subtotal * 0.08);
+      var total = subtotal + tax;
     }
+    if ($('#withhold').prop('checked')) { //源泉徴収あり
+      if (subtotal > 1000000) {
+        var taxwh = Math.round((subtotal - 1000000) * income_tax[1] + (1000000 * income_tax[0]));
+      } else {
+        var taxwh = Math.round(subtotal*income_tax[0]);
+      }
+      total = total - taxwh;
+      $('#taxwh').val(taxwh);
+    } else {
+      $('#taxwh').val('');
+    }
+    $('#tax').val(tax);
+    $('#total').val(total);
+    $('#subtotal').val(subtotal);
   }
 
 });
 
 
 /*
-  ・科目が変更されたとき
-  ・数量が変更されたとき
-  ・金額が変更されたとき
-  ・税額チェックボックスが変更されたとき
-    に、小計、税額、合計を再計算する。
-
   チェックボックスで内税外税、源泉徴収表記を切り替える。
   初期設定は外税・源泉徴収なし
+
+  税率がわからん 何もわからない
   
   バリデーションチェックを実装する
   

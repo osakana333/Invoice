@@ -7,3 +7,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<?php
+  $pdo=new pdo(
+    'mysql:host=localhost; dbname=sa_insert_db; charset=utf8',
+    'satou_ayako','Wert3333-');
+?>
